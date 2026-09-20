@@ -1,15 +1,49 @@
+# Segredos — o unico bloco que, se falhar, e irreversivel.
+# Segredo commitado vaza no historico; apagar depois nao desfaz, so rotacionar.
 .env
-.venv/
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Ambiente virtual
+.venv/
+venv/
+
+# Caches de ferramenta
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
+coverage.xml
 htmlcov/
-dist/
-build/
-*.egg-info/
-.DS_Store
+
+# Frontend (Fase 9)
 node_modules/
 .next/
+out/
+
+# Infraestrutura (Fase 10)
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Editores
+.idea/
+.vscode/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# NAO ignorar: uv.lock entra no repositorio.
+# Ele e o que torna o build reproduzivel entre a sua maquina, o CI e o
+# container da Fase 10. Lockfile fora do git = "funciona na minha maquina".
