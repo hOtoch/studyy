@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: studyy-postgres
+    environment:
+      POSTGRES_USER: studyy
+      POSTGRES_PASSWORD: studyy
+      POSTGRES_DB: studyy
+    ports:
+      - "5432:5432"
+    volumes:
+      - studyy-pgdata:/var/lib/postgresql/data
+    # O healthcheck existe para que `docker compose up --wait` so retorne
+    # quando o banco estiver ACEITANDO CONEXAO, nao quando o container subir.
+    # Container rodando != banco pronto. Essa distincao e a mesma do
+    # /health/live vs /health/ready da aplicacao.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studyy -d studyy"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  studyy-pgdata:

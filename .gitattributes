@@ -1,0 +1,14 @@
+# Normaliza fim de linha. Voce desenvolve no Windows, o CI roda em Linux e a
+# Fase 10 gera containers Linux. Sem isso, um script shell commitado com CRLF
+# quebra dentro do container com um erro que nao diz nada ("bad interpreter").
+* text=auto eol=lf
+
+# Binarios: nunca converter.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.ico binary
+*.woff2 binary
+
+# Lockfile: nao poluir o diff com reformatacao.
+uv.lock linguist-generated=true
