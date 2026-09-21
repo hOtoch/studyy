@@ -61,6 +61,10 @@ select = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+# Migrations sao geradas pelo Alembic. O template deixa espaco no fim da linha
+# "Revises:" quando nao ha revisao anterior, e nao vale editar codigo gerado
+# a cada migration so por isso.
+"alembic/versions/*" = ["W291"]
 
 # ---------------------------------------------------------------------------
 # mypy: o "compilador" que o Python nao tem
