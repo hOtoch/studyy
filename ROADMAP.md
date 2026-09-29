@@ -43,7 +43,9 @@ Este roadmap tem duas trilhas que andam **juntas**:
 
 ### 🎓 O Checkpoint Socrático
 
-Toda fase termina com 5 perguntas. Elas **não** são questionário de revisão — são perguntas projetadas para expor o que você acha que entendeu e não entendeu. Várias delas pedem que você **defenda uma posição e depois a ataque**, porque conseguir argumentar os dois lados é a diferença entre saber uma regra e entender um trade-off.
+Toda fase termina com um checkpoint. Elas **não** são questionário de revisão — são perguntas projetadas para expor o que você acha que entendeu e não entendeu. Várias delas pedem que você **defenda uma posição e depois a ataque**, porque conseguir argumentar os dois lados é a diferença entre saber uma regra e entender um trade-off.
+
+> 📌 **Você responde no máximo 3 por fase.** As 5 listadas em cada checkpoint são um repertório: ao fim da fase, escolhemos as 3 que fazem mais sentido para o que de fato aconteceu na construção. As outras são descartadas, não adiadas.
 
 **O protocolo:**
 
