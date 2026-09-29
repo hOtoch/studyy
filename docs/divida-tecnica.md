@@ -37,6 +37,15 @@ refatoração.
 **Como será pago:** um evento de domínio. `SubjectDeleted` é publicado, e cada
 módulo reage apagando o que é seu. Ninguém mexe na tabela de ninguém.
 
+⚠️ **Quando isso acontecer, o soft delete precisa mudar junto.** Hoje a
+restauração em cascata identifica "o que caiu junto" pela marca de tempo
+idêntica nos três níveis — o que só funciona porque a deleção acontece numa
+transação única, com um `datetime` calculado uma vez e passado adiante.
+
+Com eventos, cada módulo reage no seu tempo e os timestamps **vão** divergir.
+Aí a coluna `deleted_batch_id` (UUID), hoje descartada por ser redundante,
+deixa de ser preferência e vira necessidade.
+
 ---
 
 ## DT-003 — Apagar matéria apagava anotações em silêncio ✅ RESOLVIDO

@@ -1,9 +1,9 @@
 """Erros de dominio do modulo de materias."""
 
-from studyy.exceptions import DomainError
+from studyy.exceptions import Conflict, Invalid, NotFound
 
 
-class SubjectNotFound(DomainError):
+class SubjectNotFound(NotFound):
     """Existe uma classe de mesmo nome em `topics/exceptions.py`, e e proposital.
 
     Cada modulo tem o seu vocabulario de erro. La, SubjectNotFound e uma
@@ -20,18 +20,18 @@ class SubjectNotFound(DomainError):
         super().__init__(f"Materia {subject_id} nao encontrada")
 
 
-class EmptySubjectName(DomainError):
+class EmptySubjectName(Invalid):
     def __init__(self) -> None:
         super().__init__("Nome da materia nao pode ser vazio")
 
 
-class DuplicateSubjectName(DomainError):
+class DuplicateSubjectName(Conflict):
     def __init__(self, name: str) -> None:
         self.name = name
         super().__init__(f"Ja existe a materia '{name}'")
 
 
-class SubjectNotInTrash(DomainError):
+class SubjectNotInTrash(Conflict):
     """Tentativa de restaurar algo que nao esta na lixeira."""
 
     def __init__(self, subject_id: int) -> None:

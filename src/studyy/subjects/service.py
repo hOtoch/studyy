@@ -74,12 +74,6 @@ class SubjectService:
         return subject
 
     async def delete(self, subject_id: int) -> None:
-        """Manda a materia, seus topicos e as anotacoes deles para a lixeira.
-
-        Nada e removido do banco. A MESMA marca de tempo desce pelos tres
-        niveis, e e ela que permite restaurar exatamente o que caiu junto --
-        sem ressuscitar o que ja estava apagado antes.
-        """
         subject = await self.get(subject_id)
         at = datetime.now(UTC)
 

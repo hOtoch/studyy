@@ -5,16 +5,16 @@ de apresentacao. Numa CLI, o mesmo DuplicateTopicTitle viraria uma mensagem no
 terminal e um exit code diferente de zero.
 """
 
-from studyy.exceptions import DomainError
+from studyy.exceptions import Conflict, Invalid, NotFound
 
 
-class TopicNotFound(DomainError):
+class TopicNotFound(NotFound):
     def __init__(self, topic_id: int) -> None:
         self.topic_id = topic_id
         super().__init__(f"Topico {topic_id} nao encontrado")
 
 
-class SubjectNotFound(DomainError):
+class SubjectNotFound(NotFound):
     """O topico pertence a uma materia que nao existe.
 
     Mora aqui, e nao em `subjects/`, porque quem levanta este erro e o
@@ -28,19 +28,19 @@ class SubjectNotFound(DomainError):
         super().__init__(f"Materia {subject_id} nao encontrada")
 
 
-class EmptyTopicTitle(DomainError):
+class EmptyTopicTitle(Invalid):
     def __init__(self) -> None:
         super().__init__("Titulo do topico nao pode ser vazio")
 
 
-class DuplicateTopicTitle(DomainError):
+class DuplicateTopicTitle(Conflict):
     def __init__(self, subject_id: int, title: str) -> None:
         self.subject_id = subject_id
         self.title = title
         super().__init__(f"A materia {subject_id} ja tem um topico chamado '{title}'")
 
 
-class TopicNotInTrash(DomainError):
+class TopicNotInTrash(Conflict):
     """Tentativa de restaurar algo que nao esta na lixeira."""
 
     def __init__(self, topic_id: int) -> None:
