@@ -22,45 +22,16 @@ from typing import TYPE_CHECKING, TypedDict
 
 from fastapi import FastAPI, HTTPException, Request, Response, status
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import ForeignKey, String, Text, delete, select, text
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import delete, select, text
 
 from studyy.config import Settings, get_settings
 from studyy.database import create_engine, create_sessionmaker
+from studyy.notes.models import Note
+from studyy.subjects.models import Subject
+from studyy.topics.models import Topic
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncEngine
-
-
-# ---------------------------------------------------------------------------
-# Tabelas
-# ---------------------------------------------------------------------------
-class Base(DeclarativeBase):
-    pass
-
-
-class Subject(Base):
-    __tablename__ = "subjects"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120))
-
-
-class Topic(Base):
-    __tablename__ = "topics"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"))
-    title: Mapped[str] = mapped_column(String(200))
-
-
-class Note(Base):
-    __tablename__ = "notes"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id"))
-    title: Mapped[str] = mapped_column(String(200))
-    content: Mapped[str] = mapped_column(Text())
 
 
 # ---------------------------------------------------------------------------

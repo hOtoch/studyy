@@ -7,7 +7,13 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from studyy.config import get_settings
-from studyy.main import Base
+from studyy.database import Base
+
+# Os modelos sao importados apenas para se registrarem no Base.metadata.
+# Sem estes imports o autogenerate acharia que as tabelas nao existem.
+from studyy.notes import models as _notes_models  # noqa: F401
+from studyy.subjects import models as _subjects_models  # noqa: F401
+from studyy.topics import models as _topics_models  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

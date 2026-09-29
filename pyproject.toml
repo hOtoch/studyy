@@ -65,6 +65,11 @@ select = [
 # "Revises:" quando nao ha revisao anterior, e nao vale editar codigo gerado
 # a cada migration so por isso.
 "alembic/versions/*" = ["W291"]
+# N818 exige sufixo "Error" em excecao. Aqui os nomes vem da linguagem ubiqua
+# do dominio: no negocio se diz "topico nao encontrado", nao "erro de topico
+# nao encontrado". A classe base ja se chama DomainError, entao a heranca
+# carrega o sinal que a convencao quer garantir.
+"**/exceptions.py" = ["N818"]
 
 # ---------------------------------------------------------------------------
 # mypy: o "compilador" que o Python nao tem

@@ -19,8 +19,19 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.orm import DeclarativeBase
 
 from studyy.config import Settings
+
+
+class Base(DeclarativeBase):
+    """Base declarativa compartilhada pelas tabelas dos tres modulos.
+
+    Mora aqui, e nao em um dos modulos, porque nenhum deles e dono dela: o
+    Alembic precisa de UM metadata com as tres tabelas registradas para gerar
+    migration, e colocar a Base em `subjects/` faria `topics/` depender de
+    `subjects/` por um motivo que nao e de dominio.
+    """
 
 
 def create_engine(settings: Settings) -> AsyncEngine:
