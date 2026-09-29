@@ -135,3 +135,28 @@ causa dano.
 
 **Pendente de decisão:** o valor de X. Sugestão: 30 dias, alinhado com o padrão
 de lixeira que as pessoas já conhecem.
+
+---
+
+## DT-008 — Service depende de repositório concreto
+
+**Desde:** Fase 2 · **Paga em:** Fase 3
+
+`TopicService.__init__` declara `topics: TopicRepository` — a classe concreta.
+O mesmo vale para os outros dois services e para a `AsyncSession`.
+
+**Consequência prática:** os testes com repositório em memória passam em tempo
+de execução, mas o `mypy` recusa os quatro argumentos. Foram necessários quatro
+`# type: ignore[arg-type]` em `tests/unit/test_topic_service.py`.
+
+**Por que aceitamos:** a saída é um `typing.Protocol`, que é o D do SOLID e
+conteúdo da Fase 3. Antecipar tiraria da Fase 3 justamente a descoberta que a
+motiva.
+
+**Como será pago:** um `Protocol` por repositório, declarado no módulo que
+consome. O real e o fake passam a ser dois cumpridores do mesmo contrato, sem
+herança entre eles.
+
+**A lição a registrar:** a abstração não foi inventada por disciplina, foi
+exigida por uma necessidade concreta — algo que não pôde ser substituído. É
+essa a ordem certa.

@@ -2990,9 +2990,9 @@ Marque conforme avança. Anote a data — é seu próprio heatmap antes do app e
 
 | Fase | Status | Início | Fim | ADR | Checkpoint | Notas |
 |---|---|---|---|---|---|---|
-| 0 — Fundação | ⬜ | | | 001,002,003 | ⬜ | |
-| 1 — Monólito ingênuo | ⬜ | | | | ⬜ | |
-| 2 — Camadas | ⬜ | | | | ⬜ | |
+| 0 — Fundação | ✅ | 2026-09-19 | 2026-09-21 | 001,002,003 | ✅ | |
+| 1 — Monólito ingênuo | ✅ | 2026-09-21 | 2026-09-21 | | ✅ | |
+| 2 — Camadas | ✅ | 2026-09-28 | 2026-09-29 | | 🟨 | soft delete entrou junto |
 | 3 — SOLID | ⬜ | | | | ⬜ | |
 | 4 — DDD tático | ⬜ | | | | ⬜ | |
 | 5 — Clean/Hexagonal | ⬜ | | | 004 | ⬜ | |

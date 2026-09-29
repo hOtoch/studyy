@@ -60,7 +60,9 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+# TC001 quer mover import de model para bloco TYPE_CHECKING, mas nos fakes
+# eles sao instanciados em runtime.
+"tests/*" = ["S101", "TC001"]
 # Migrations sao geradas pelo Alembic. O template deixa espaco no fim da linha
 # "Revises:" quando nao ha revisao anterior, e nao vale editar codigo gerado
 # a cada migration so por isso.
