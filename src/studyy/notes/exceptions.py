@@ -30,3 +30,11 @@ class EmptyNoteTitle(DomainError):
 class EmptyNoteContent(DomainError):
     def __init__(self) -> None:
         super().__init__("Conteudo da anotacao nao pode ser vazio")
+
+
+class NoteNotInTrash(DomainError):
+    """Tentativa de restaurar algo que nao esta na lixeira."""
+
+    def __init__(self, note_id: int) -> None:
+        self.note_id = note_id
+        super().__init__(f"Anotacao {note_id} nao esta na lixeira")

@@ -29,3 +29,11 @@ class DuplicateSubjectName(DomainError):
     def __init__(self, name: str) -> None:
         self.name = name
         super().__init__(f"Ja existe a materia '{name}'")
+
+
+class SubjectNotInTrash(DomainError):
+    """Tentativa de restaurar algo que nao esta na lixeira."""
+
+    def __init__(self, subject_id: int) -> None:
+        self.subject_id = subject_id
+        super().__init__(f"Materia {subject_id} nao esta na lixeira")

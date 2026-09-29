@@ -9,6 +9,8 @@ repositorio e um fato, e a decisao de que aquele fato e um problema e tomada
 com `if`.
 """
 
+from datetime import UTC, datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from studyy.notes.repository import NoteRepository
@@ -18,6 +20,7 @@ from studyy.topics.exceptions import (
     EmptyTopicTitle,
     SubjectNotFound,
     TopicNotFound,
+    TopicNotInTrash,
 )
 from studyy.topics.models import Topic
 from studyy.topics.repository import TopicRepository
@@ -78,12 +81,44 @@ class TopicService:
         return topic
 
     async def delete(self, topic_id: int) -> None:
-        """Apaga o topico e as anotacoes dele.
+        """Manda o topico e as anotacoes dele para a lixeira.
 
-        ⚠️ Mesma decisao em aberto do SubjectService.delete: a cascata foi
-        preservada da Fase 1, nao escolhida. Ver docs/divida-tecnica.md.
+        Nada e removido do banco. A marca de tempo e a MESMA nos dois niveis,
+        e e ela que permite restaurar exatamente o que caiu junto.
         """
         topic = await self.get(topic_id)
-        await self._notes.delete_by_topics([topic_id])
-        await self._topics.delete(topic)
+        at = datetime.now(UTC)
+
+        await self._notes.soft_delete_by_topics([topic_id], at)
+        await self._topics.soft_delete(topic, at)
         await self._session.commit()
+
+    async def restore(self, topic_id: int) -> Topic:
+        """Tira o topico da lixeira, junto com as anotacoes que cairam com ele.
+
+        Duas regras nao obvias:
+
+        1. A materia precisa estar viva. Restaurar um topico dentro de uma
+           materia que continua na lixeira produziria um orfao invisivel.
+        2. O titulo precisa continuar livre. Enquanto o topico estava na
+           lixeira, alguem pode ter criado outro com o mesmo nome -- e
+           restaurar sem checar violaria a regra de unicidade por um caminho
+           que ninguem previu.
+        """
+        topic = await self._topics.get_deleted_by_id(topic_id)
+        if topic is None:
+            raise TopicNotInTrash(topic_id)
+
+        if not await self._subjects.exists_by_id(topic.subject_id):
+            raise SubjectNotFound(topic.subject_id)
+
+        if await self._topics.exists_with_title(topic.subject_id, topic.title):
+            raise DuplicateTopicTitle(topic.subject_id, topic.title)
+
+        at = topic.deleted_at
+        assert at is not None  # garantido pelo get_deleted_by_id
+
+        await self._topics.restore(topic)
+        await self._notes.restore_by_topics([topic_id], at)
+        await self._session.commit()
+        return topic

@@ -9,12 +9,15 @@ duas anotacoes chamadas "Aula 1" em dias diferentes. Repare que isso e uma
 decisao de dominio, nao um esquecimento: a ausencia de regra tambem e desenho.
 """
 
+from datetime import UTC, datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from studyy.notes.exceptions import (
     EmptyNoteContent,
     EmptyNoteTitle,
     NoteNotFound,
+    NoteNotInTrash,
     TopicNotFound,
 )
 from studyy.notes.models import Note
@@ -66,9 +69,27 @@ class NoteService:
         return note
 
     async def delete(self, note_id: int) -> None:
+        """Manda a anotacao para a lixeira. Nada e removido do banco."""
         note = await self.get(note_id)
-        await self._notes.delete(note)
+        await self._notes.soft_delete(note, datetime.now(UTC))
         await self._session.commit()
+
+    async def restore(self, note_id: int) -> Note:
+        """Tira a anotacao da lixeira.
+
+        O topico precisa estar vivo: restaurar uma anotacao dentro de um topico
+        que continua na lixeira produziria um orfao invisivel.
+        """
+        note = await self._notes.get_deleted_by_id(note_id)
+        if note is None:
+            raise NoteNotInTrash(note_id)
+
+        if await self._topics.get_by_id(note.topic_id) is None:
+            raise TopicNotFound(note.topic_id)
+
+        await self._notes.restore(note)
+        await self._session.commit()
+        return note
 
     @staticmethod
     def _normalize(title: str, content: str) -> tuple[str, str]:

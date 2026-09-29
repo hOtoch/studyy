@@ -38,3 +38,11 @@ class DuplicateTopicTitle(DomainError):
         self.subject_id = subject_id
         self.title = title
         super().__init__(f"A materia {subject_id} ja tem um topico chamado '{title}'")
+
+
+class TopicNotInTrash(DomainError):
+    """Tentativa de restaurar algo que nao esta na lixeira."""
+
+    def __init__(self, topic_id: int) -> None:
+        self.topic_id = topic_id
+        super().__init__(f"Topico {topic_id} nao esta na lixeira")

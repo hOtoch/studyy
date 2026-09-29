@@ -39,25 +39,27 @@ módulo reage apagando o que é seu. Ninguém mexe na tabela de ninguém.
 
 ---
 
-## DT-003 — Apagar matéria apaga anotações em silêncio 🔴
+## DT-003 — Apagar matéria apagava anotações em silêncio ✅ RESOLVIDO
 
-**Desde:** Fase 1 · **Decisão pendente**
+**Aberto na:** Fase 1 · **Resolvido na:** Fase 2
 
-Esta não é dívida estrutural, é **risco de produto**. Apagar uma matéria por
-engano apaga todos os tópicos e todas as anotações, sem confirmação e sem volta.
-As anotações são o ativo mais valioso do Studyy — são elas que alimentam o RAG
-da Fase 14.
+Apagar uma matéria destruía todos os tópicos e todas as anotações, sem
+confirmação e sem volta.
 
-**Alternativas:**
+**Decisão do Hugo:** soft delete, com confirmação na interface e remoção
+definitiva depois de X dias sem restaurar.
 
-1. Recusar apagar matéria que ainda tenha tópicos; o usuário esvazia antes
-2. Soft delete: marcar como apagada e nunca remover de fato
-3. Manter a cascata, mas exigir confirmação explícita na borda
+**Implementado:** coluna `deleted_at` nas três tabelas. Nada é removido do
+banco; `delete` marca a data e toda consulta filtra `deleted_at IS NULL`.
 
-**Recomendação:** a 2, combinada com a 3. O custo é baixo e o erro é
-irreversível — é o tipo de assimetria que justifica pagar antes.
+O detalhe que faz funcionar: numa deleção em cascata, a **mesma marca de tempo**
+desce pelos três níveis. Restaurar traz de volta só o que tem aquele timestamp
+exato — um tópico apagado individualmente antes mantém a data dele e não
+ressuscita junto.
 
-**Decisão do Hugo:** Vamos implementar soft delete
+**Onde o filtro mora:** no repositório. É o único lugar que monta consulta, então
+não há como esquecer numa rota. Isto só é verdade por causa da refatoração da
+Fase 2 — na Fase 1, com 8 `select()` espalhados, soft delete seria perigoso.
 
 ---
 
@@ -91,3 +93,36 @@ não são, e uma implementação futura que faça I/O não quebra a assinatura.
 
 **Nota:** é um trade-off defensável, não um erro. Está aqui para ficar
 registrado que foi escolha, e não descuido.
+
+---
+
+## DT-006 — `datetime.now()` direto no service
+
+**Desde:** Fase 2 · **Paga em:** Fase 5
+
+Os três services chamam `datetime.now(UTC)` para marcar `deleted_at`. É uma
+dependência oculta em estado global, não declarada em assinatura nenhuma — o
+mesmo problema do `os.getenv()` espalhado, discutido na Fase 0.
+
+**Consequência prática:** não há como testar "purgar o que está na lixeira há
+mais de 30 dias" sem esperar 30 dias de verdade.
+
+**Como será pago:** port `Clock`, com `SystemClock` em produção e `FrozenClock`
+nos testes. Esta é a motivação concreta que faz aquele port valer a pena — e é
+por isso que ele não foi antecipado.
+
+---
+
+## DT-007 — Purga nunca é executada
+
+**Desde:** Fase 2 · **Paga em:** Fase 12
+
+Os três repositórios têm `purge(before)`, que remove de vez o que está na
+lixeira há tempo demais. Nada chama esse método.
+
+**Por que aceitamos:** purga é tarefa agendada, e agendador é conteúdo da Fase 12
+(worker + tarefas periódicas). Dado parado na lixeira por algumas semanas não
+causa dano.
+
+**Pendente de decisão:** o valor de X. Sugestão: 30 dias, alinhado com o padrão
+de lixeira que as pessoas já conhecem.

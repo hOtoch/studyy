@@ -1,6 +1,8 @@
 """Tabela de topicos."""
 
-from sqlalchemy import ForeignKey, String
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from studyy.database import Base
@@ -14,3 +16,9 @@ class Topic(Base):
     # Assim `topics` nao passa a depender de `subjects` no nivel de import.
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"))
     title: Mapped[str] = mapped_column(String(200))
+
+    # NULL = viva. Preenchida = na lixeira.
+    # A mesma marca de tempo e usada no pai e nos filhos quando a delecao e em
+    # cascata: e isso que permite restaurar so o que caiu junto, sem ressuscitar
+    # o que ja estava apagado antes.
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
